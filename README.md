@@ -50,7 +50,7 @@ Describe your project
 
 ## :sparkles: Approach ##
 
-# Approach - 1
+### Approach - 1
 - in devtools if go to the network tab and click on XHR request, so when i click loadmore button [Food Grab](https://food.grab.com/sg/en/restaurants) we can see this request sent to "https://portal.grab.com/foodweb/v2/search"
 
 - so if we go to response section you can see 
@@ -78,14 +78,15 @@ latlng: {latitude: 1.2862877, longitude: 103.84841596}
 
 but since use of selenium was requested i tried a diffrent way
 
-# Approach - 2
+### Approach - 2
 - So since i have to capture a XHR(XMLHttpRequest) request, i have used selenium wire for this for capturing the XHR request, i have used chrome driver for this.
 - Solution Desgin 
+```
 1. Load the python libraries needed
 2. def load_more - Load the food.grab.com page and automatically activate the "Load More" button until the page contains all the restaurants in the Singapore area
 3. def capture_post_response - Use driver to make a POST request for the "grab_internal_post_api" and then decode the data and store it in json format in post_data.
 4. def get_restaurant_latlng - remove all the extra and keep name and location only, then store it in a list of dictionaries.
-
+```
 - Given a base_url, capture all restaurants (based on user's submitted location, e.g., sg) latitude & longitude
 by intercepting grab-foods internal POST request. self.grab_internal_post_api is found by manually inspecting all XHR made my grab-foods, using chrome dev tools.
 
