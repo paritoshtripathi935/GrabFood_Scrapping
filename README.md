@@ -115,7 +115,7 @@ $ git clone https://github.com/{{YOUR_GITHUB_USERNAME}}/foodgrab_scrapping
 $ cd foodgrab_scrapping
 
 # Setup virtual environment
-$ cd foodgrab_scrapping
+$ cd python3 -m venv venv
 
 # Install dependencies
 $ pip install -r requirements.txt
