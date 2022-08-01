@@ -45,8 +45,7 @@
 <br>
 
 ## :dart: About ##
-
-Describe your project
+Web scraping of Food Grab website using XHR requests
 
 ## :sparkles: Approach ##
 
