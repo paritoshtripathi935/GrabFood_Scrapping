@@ -18,7 +18,7 @@ class Driver:
 
     def setup(self): # Setup the browser
         chrome_opts = webdriver.ChromeOptions()
-        chrome_opts.headless = True
+        chrome_opts.headless = True  # In headless mode, it’s possible to run large scale web application tests, navigate from page to page without human intervention
         user_agent = ('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) ' + 
                       'Chrome/60.0.3112.50 Safari/537.36') # Set the user agent
         chrome_opts.add_argument(f'user-agent={user_agent}') # Add the user agent
@@ -35,6 +35,7 @@ class Driver:
                 'stats.g.doubleclick.net',
             ],
         }
+        #A list of addresses for which Selenium Wire should be bypassed entirely. Note that if you have configured an upstream proxy then requests to excluded hosts will also bypass that proxy.
 
         self.browser = webdriver.Chrome(executable_path=self.driver_path,
                                         desired_capabilities=chrome_opts.to_capabilities(),
@@ -44,7 +45,7 @@ class Driver:
         self.browser.quit()
 
 
-# above is the driver class for the browser and the below is the class for the XHR requests and responses  
+# Above is the driver class for the browser and the below is the class for the XHR requests and responses  
 
 
 class Scraper:  
@@ -65,11 +66,11 @@ class Scraper:
         sleep(10)
 
     def load_more(self):  # clicking load more button to load more restaurants in the list
-        del self.driver.browser.requests
+        del self.driver.browser.requests # to clear previously captured requests and HAR entries, use del
 
-        condition = EC.presence_of_element_located((By.XPATH, '//button[contains(@class, "ant-btn ant-btn-block")]')) # load more button is present in the page 
-        more_results_button = WebDriverWait(self.driver.browser, 10, poll_frequency=1).until(condition) # wait for the load more button to be present
+        condition = EC.presence_of_element_located((By.XPATH, '//button[contains(@class, "ant-btn ant-btn-block")]')) # find element in Document Object Model (DOM)
 
+        more_results_button = WebDriverWait(self.driver.browser, 10, poll_frequency=1).until(condition) # wait for 10 seconds for the load more button to be present and deafult poll freqency is 0.5 second
         print('more_results_button: ', more_results_button, '\n') # print the load more button
         more_results_button.click() # click on the load more button
         sleep(10)
@@ -88,7 +89,7 @@ class Scraper:
 
     def capture_post_response(self):  # capture the post response from grab-foods
         post_data = []
-        for r in self.driver.browser.iter_requests():
+        for r in self.driver.browser.iter_requests(): # Returns an iterator over captured requests. Useful when dealing with a large number of requests.
             if r.method == 'POST' and r.url == self.grab_internal_post_api:  # capture the post response
                 # print(f"r.response.status_code: {r.response.status_code}, r.response.reason: {r.response.reason}")
 
@@ -101,13 +102,14 @@ class Scraper:
         return post_data
 
     def get_restaurant_latlng(self, post_data):
+        # expalin above function to understand the code 
         d = {}
         for p in post_data: # get the restaurants latlng from the post response and save it in a dictionary
             l = p['searchResult']['searchMerchants']  # list of restaurants
             for rst in l: # for each restaurant
                 try:
                     d[rst['chainID']] = {'chainName': rst['chainName'], 'latlng': rst['latlng']}  # chainID is the key for the dictionary
-                except Exception as err:
+                except Exception as err: # if the chainID is not present in the dictionary
                     d[rst['address']['name']] = {'chainName': rst['address']['name'], 'latlng': rst['latlng']} # address is the key for the dictionary
                     # print(rst)
                     # print(type(err), err)
